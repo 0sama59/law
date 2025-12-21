@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title"> عوض الله للمحاماة والاستشارات القانونية </title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
+            background-color: #121212;
+            color: white;
+            scroll-behavior: smooth;
+            transition: all 0.3s ease;
+            /* For smooth transition when changing alignment */
+        }
+
+        .header-bg {
+            background-color: #0b1c2e;
+        }
+
+        .text-justice {
+            color: #d1b068;
+        }
+
+        .dark-input {
+            background-color: #1e1e1e;
+            border-color: #4a4a4a;
+            color: white;
+        }
+
+        .dark-input:focus {
+            border-color: #d1b068;
+            box-shadow: 0 0 0 1px #d1b068;
+        }
+
+        /* Custom class for the focus ring on buttons/links */
+        .focus-justice:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(209, 176, 104, 0.5);
+            /* d1b068 with opacity */
+        }
+
+        /* Improvement: Placeholder style for dark mode inputs */
+        .dark-input::placeholder {
+            color: #888;
+            opacity: 1;
+        }
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        /* --- Hero Section Styling with Image and Overlay --- */
+        .hero-bg {
+            /* Placeholder for a professional, dark legal image */
+            background-image: url('https://placehold.co/1920x800/1C2833/95A5A6?text=Justice+and+Integrity');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            /* Needed for the ::before overlay */
+        }
+
+        /* Dark Overlay for contrast */
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* 60% black overlay */
+            z-index: 1;
+        }
+
+        .hero-content-wrapper {
+            position: relative;
+            z-index: 10;
+            /* Ensure text is above the overlay */
+        }
+        #nav-links .nav-css {
+            padding-left: 20px;
+        }
+
+        #nav-links a:hover {
+            color: red;
+        }
+
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- Language Selection Modal (Always on top initially) -->
+    <div id="language-modal" class="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center transition-opacity duration-300">
+        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl text-center max-w-sm w-full">
+            <h2 class="text-2xl font-bold text-justice mb-6">Select Language / اختيار اللغة</h2>
+            <div class="flex flex-col space-y-4">
+                <button onclick="setLanguage('ar')"
+                    class="py-3 px-6 bg-justice hover:bg-justice/80 text-gray-900 font-semibold rounded-lg transition duration-200 focus-justice">
+                    العربية
+                </button>
+                <button onclick="setLanguage('en')"
+                    class="py-3 px-6 bg-gray-600 hover:bg-gray-500 text-white font-semibold rounded-lg transition duration-200 focus-justice">
+                    English
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper (Starts slightly dimmed/behind modal) -->
+    <div id="main-sections-wrapper" class="flex-grow transition-opacity duration-300 opacity-25">
+
+        <!-- Header & Navigation -->
+        <header class="header-bg sticky top-0 z-40 shadow-xl border-b border-justice/50">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <!-- Logo/Firm Name -->
+                <div class="flex items-center space-x-2">
+                    <span class="text-3xl text-justice">⚖️</span>
+                    <span id="nav-firm-name" class="text-xl font-extrabold" data-key="firm_name"></span>
+                </div>
+
+                <!-- Navigation Links (Hidden on mobile, shown on desktop) -->
+                <nav class="hidden sm:flex space-x-6 text-lg" id="nav-links">
+                    <a href="#hero-section" id="nav-home" class="nav-css"
+                        data-key="nav_home"></a>
+                    <a href="#services-section" id="nav-services"
+                        class="nav-css" data-key="nav_services"></a>
+                    <a href="#leadership-section" id="nav-leadership"
+                        class="nav-css" data-key="nav_leadership"></a>
+                    <a href="#about-section" id="nav-about" class="nav-css"
+                        data-key="nav_about"></a>
+                    <a href="#contact-section" id="nav-contact"
+                        class="nav-css" data-key="nav_contact"></a>
+                </nav>
+
+                <!-- Action Buttons (Login + Language Switcher) -->
+                <div class="flex items-center space-x-3">
+                    <!-- NEW: Employee Login Button -->
+                    <a href="login.html" id="nav-login-btn"
+                        class="text-sm font-medium py-2 px-3 rounded-lg border border-justice text-justice hover:bg-justice/20 transition duration-200 focus-justice"
+                        data-key="nav_login"></a>
+
+                    <!-- Language Switcher Button -->
+                    <button onclick="toggleLanguage()"
+                        class="bg-gray-700 hover:bg-gray-600 text-sm font-medium py-2 px-3 rounded-lg transition duration-200 focus-justice">
+                        <span class="text-lg">🌐</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section id="hero-section" class="pt-20 pb-24 hero-bg">
+            <div class="container mx-auto px-4 hero-content-wrapper">
+                <div id="hero-content" class="max-w-4xl">
+                    <h1 id="hero-title" class="text-5xl md:text-7xl font-extrabold mb-4 text-justice leading-tight"
+                        data-key="hero_title"></h1>
+                    <p id="hero-subtitle" class="text-2xl md:text-3xl font-light mb-8 text-white"
+                        data-key="hero_subtitle"></p>
+                    <div id="hero-buttons-container" class="flex flex-col sm:flex-row gap-4">
+                        <a href="#contact-section" id="hero-btn-contact"
+                            class="px-8 py-3 bg-justice text-gray-900 font-semibold rounded-full hover:bg-justice/80 transition duration-200 text-center focus-justice"
+                            data-key="hero_btn_contact"></a>
+                        <a href="#services-section" id="hero-btn-services"
+                            class="px-8 py-3 border border-justice text-justice font-semibold rounded-full hover:bg-justice/10 transition duration-200 text-center focus-justice"
+                            data-key="hero_btn_services"></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services-section" class="py-20">
+            <div class="container mx-auto px-4">
+                <h2 id="services-title" class="text-4xl font-bold text-center text-justice mb-12"
+                    data-key="services_title"></h2>
+
+                <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Service 1 -->
+                    <div
+                        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-justice transition duration-300">
+                        <span class="text-4xl text-justice block mb-4">🏛️</span>
+                        <h3 id="service-1-title" class="text-2xl font-semibold mb-3" data-key="service_1_title"></h3>
+                        <p id="service-1-description" class="text-gray-400" data-key="service_1_description"></p>
+                    </div>
+                    <!-- Service 2 -->
+                    <div
+                        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-justice transition duration-300">
+                        <span class="text-4xl text-justice block mb-4">💼</span>
+                        <h3 id="service-2-title" class="text-2xl font-semibold mb-3" data-key="service_2_title"></h3>
+                        <p id="service-2-description" class="text-gray-400" data-key="service_2_description"></p>
+                    </div>
+                    <!-- Service 3 -->
+                    <div
+                        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-justice transition duration-300">
+                        <span class="text-4xl text-justice block mb-4">📜</span>
+                        <h3 id="service-3-title" class="text-2xl font-semibold mb-3" data-key="service_3_title"></h3>
+                        <p id="service-3-description" class="text-gray-400" data-key="service_3_description"></p>
+                    </div>
+                    <!-- Service 4 -->
+                    <div
+                        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-justice transition duration-300">
+                        <span class="text-4xl text-justice block mb-4">🌐</span>
+                        <h3 id="service-4-title" class="text-2xl font-semibold mb-3" data-key="service_4_title"></h3>
+                        <p id="service-4-description" class="text-gray-400" data-key="service_4_description"></p>
+                    </div>
+                    <!-- Service 5 -->
+                    <div
+                        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-justice transition duration-300">
+                        <span class="text-4xl text-justice block mb-4">💰</span>
+                        <h3 id="service-5-title" class="text-2xl font-semibold mb-3" data-key="service_5_title"></h3>
+                        <p id="service-5-description" class="text-gray-400" data-key="service_5_description"></p>
+                    </div>
+                    <!-- Service 6 -->
+                    <div
+                        class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-justice transition duration-300">
+                        <span class="text-4xl text-justice block mb-4">👪</span>
+                        <h3 id="service-6-title" class="text-2xl font-semibold mb-3" data-key="service_6_title"></h3>
+                        <p id="service-6-description" class="text-gray-400" data-key="service_6_description"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leadership Section -->
+        <section id="leadership-section" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-4">
+                <h2 id="leadership-title" class="text-4xl font-bold text-center text-justice mb-12"
+                    data-key="leadership_title"></h2>
+
+                <!-- Main Partner Block -->
+                <div id="main-partner-block"
+                    class="bg-[#1e1e1e] p-8 rounded-xl shadow-2xl flex flex-col md:flex-row items-center md:items-start gap-8 mb-16">
+
+                    <!-- Photo Card (Left/Right Swapping based on direction) -->
+                    <div class="md:w-1/3 lg:w-1/4 p-4 bg-gray-700/50 rounded-lg flex items-center justify-center">
+                        <div
+                            class="w-48 h-48 bg-gray-600 rounded-full flex items-center justify-center border-4 border-justice">
+                            <span id="partner-photo-placeholder" class="text-gray-300 text-lg"
+                                data-key="partner_photo_placeholder"></span>
+                            <!-- In a real site, this would be: <img src="[Partner Image URL]" alt="[Partner Name]"> -->
+                        </div>
+                    </div>
+
+                    <!-- Text Content -->
+                    <div id="partner-text-content" class="md:w-2/3 lg:w-3/4 text-center md:text-start">
+                        <p id="partner-role" class="text-xl font-semibold text-justice mb-1" data-key="partner_role">
+                        </p>
+                        <h3 id="partner-name" class="text-4xl md:text-5xl font-extrabold mb-4" data-key="partner_name">
+                        </h3>
+                        <p id="partner-bio" class="text-gray-300 text-lg leading-relaxed" data-key="partner_bio"></p>
+                    </div>
+                </div>
+
+                <!-- Other Team Members (Basic Grid Placeholder) -->
+                <h3 id="team-title" class="text-3xl font-semibold text-center text-white mb-8" data-key="team_title">
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Team Member 1 -->
+                    <div class="bg-[#1e1e1e] p-4 rounded-xl text-center">
+                        <span class="text-5xl block mb-3">🧑‍💼</span>
+                        <p class="font-semibold text-justice" data-key="team_member_1_name"></p>
+                        <p class="text-sm text-gray-400" data-key="team_member_1_role"></p>
+                    </div>
+                    <!-- Team Member 2 -->
+                    <div class="bg-[#1e1e1e] p-4 rounded-xl text-center">
+                        <span class="text-5xl block mb-3">👩‍⚖️</span>
+                        <p class="font-semibold text-justice" data-key="team_member_2_name"></p>
+                        <p class="text-sm text-gray-400" data-key="team_member_2_role"></p>
+                    </div>
+                    <!-- Team Member 3 -->
+                    <div class="bg-[#1e1e1e] p-4 rounded-xl text-center">
+                        <span class="text-5xl block mb-3">👨‍💻</span>
+                        <p class="font-semibold text-justice" data-key="team_member_3_name"></p>
+                        <p class="text-sm text-gray-400" data-key="team_member_3_role"></p>
+                    </div>
+                    <!-- Team Member 4 (Hidden on small screens) -->
+                    <div class="bg-[#1e1e1e] p-4 rounded-xl text-center hidden lg:block">
+                        <span class="text-5xl block mb-3">⚖️</span>
+                        <p class="font-semibold text-justice" data-key="team_member_4_name"></p>
+                        <p class="text-sm text-gray-400" data-key="team_member_4_role"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about-section" class="py-20">
+            <div class="container mx-auto px-4 flex flex-col lg:flex-row items-center gap-12" id="about-main-container">
+                <!-- Image/Visual Placeholder -->
+                <div class="lg:w-1/2 w-full">
+                    <img src="img4.jpg" alt="About Awadallah Law Firm"
+                        class="rounded-xl shadow-2xl w-full h-auto object-cover">
+                </div>
+                <!-- Text Content -->
+                <div id="about-content" class="lg:w-1/2 w-full">
+                    <h2 id="about-title" class="text-4xl font-bold text-justice mb-6" data-key="about_title"></h2>
+                    <p id="about-paragraph-1" class="text-gray-300 mb-4 text-lg leading-relaxed"
+                        data-key="about_paragraph_1"></p>
+                    <p id="about-paragraph-2" class="text-gray-300 text-lg leading-relaxed"
+                        data-key="about_paragraph_2"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact-section" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-4">
+                <h2 id="contact-title" class="text-4xl font-bold text-center text-justice mb-12"
+                    data-key="contact_title"></h2>
+
+                <div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
+                    <p id="contact-instruction" class="text-gray-400 mb-6" data-key="contact_instruction"></p>
+
+                    <!-- IMPORTANT: Added 'name' attributes for EmailJS to read form fields -->
+                    <form id="contact-form">
+                        <div class="space-y-4">
+                            <!-- Name Input -->
+                            <div>
+                                <label for="name" id="label-name" class="block text-sm font-medium mb-1"
+                                    data-key="form_label_name"></label>
+                                <!-- Note: 'name="from_name"' is required for EmailJS -->
+                                <input type="text" id="name" name="from_name" required
+                                    class="dark-input w-full p-3 rounded-lg focus-justice">
+                            </div>
+
+                            <!-- Email Input -->
+                            <div>
+                                <label for="email" id="label-email" class="block text-sm font-medium mb-1"
+                                    data-key="form_label_email"></label>
+                                <!-- Note: 'name="from_email"' is required for EmailJS -->
+                                <input type="email" id="email" name="from_email" required
+                                    class="dark-input w-full p-3 rounded-lg focus-justice">
+                            </div>
+
+                            <!-- Subject Input -->
+                            <div>
+                                <label for="subject" id="label-subject" class="block text-sm font-medium mb-1"
+                                    data-key="form_label_subject"></label>
+                                <!-- Note: 'name="subject"' is required for EmailJS -->
+                                <input type="text" id="subject" name="subject" required
+                                    class="dark-input w-full p-3 rounded-lg focus-justice">
+                            </div>
+
+                            <!-- Message Textarea -->
+                            <div>
+                                <label for="message" id="label-message" class="block text-sm font-medium mb-1"
+                                    data-key="form_label_message"></label>
+                                <!-- Note: 'name="message"' is required for EmailJS -->
+                                <textarea id="message" name="message" rows="5" required
+                                    class="dark-input w-full p-3 rounded-lg focus-justice"></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="pt-4">
+                                <button type="submit" id="form-submit-btn"
+                                    class="w-full py-3 bg-justice text-gray-900 font-semibold rounded-lg hover:bg-justice/80 transition duration-200 focus-justice"
+                                    data-key="form_submit_btn"></button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Success/Error Message Display -->
+                    <div id="contact-message" class="mt-4 text-center hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer id="main-footer" class="bg-[#0b1c2e] text-white py-10 mt-20 border-t border-justice/50">
+            <div class="container mx-auto px-4">
+                <!-- Contact Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-justice/50">
+                    <!-- Item 1: Call Us -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-start"
+                        id="footer-contact-1">
+                        <p class="text-justice text-3xl mb-2" data-key="icon_call">📞</p>
+                        <h4 class="text-xl font-bold mb-1" data-key="footer_call_us"></h4>
+                        <a href="tel:+96265881000" class="text-lg hover:text-justice transition-colors"
+                            data-key="footer_call_number"></a>
+                    </div>
+
+                    <!-- Item 2: Email Us -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-start"
+                        id="footer-contact-2">
+                        <p class="text-justice text-3xl mb-2" data-key="icon_email">📧</p>
+                        <h4 class="text-xl font-bold mb-1" data-key="footer_email_us"></h4>
+                        <a href="mailto:info@awadallah.jo" class="text-lg hover:text-justice transition-colors"
+                            data-key="footer_email_address"></a>
+                    </div>
+
+                    <!-- Item 3: Visit Our Office -->
+                    <div class="flex flex-col items-center sm:items-start text-center sm:text-start"
+                        id="footer-contact-3">
+                        <p class="text-justice text-3xl mb-2" data-key="icon_location">📍</p>
+                        <h4 class="text-xl font-bold mb-1" data-key="footer_visit_office"></h4>
+                        <p class="text-lg" data-key="footer_office_address"></p>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-center text-sm text-gray-400" id="footer-copyright">
+                    <p data-key="footer_copyright"></p>
+                </div>
+            </div>
+        </footer>
+
+    </div> <!-- End of Main Content Wrapper -->
+
+    <!-- EmailJS SDK is loaded here -->
+    <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+
+    <script>
+        // --- Translation Data (UPDATED: Corrected Arabic 'about' section and location to Palestine) ---
+        const contentData = {
+            'ar': {
+                // General
+                'firm_name': 'عوض الله للمحاماة',
+                'page-title': 'عوض الله للمحاماة والاستشارات القانونية',
+                // Navigation 
+                'nav_home': ' الرئيسية',
+                'nav_services': 'الخدمات',
+                'nav_leadership': 'قيادتنا',
+                'nav_about': 'من نحن',
+                'nav_contact': 'اتصل بنا',
+                'nav_login': 'دخول الموظفين',
+                // Hero
+                'hero_title': 'تحقيق العدالة يبدأ بخطوة واثقة',
+                'hero_subtitle': 'نقدم استشارات قانونية متخصصة وحلولًا مبتكرة لقضاياكم.',
+                'hero_btn_contact': 'استشرنا الآن',
+                'hero_btn_services': 'اكتشف خدماتنا',
+                // Services
+                'services_title': 'مجالات خبرتنا',
+                'service_1_title': 'القانون المدني والتجاري',
+                'service_1_description': 'تغطية شاملة للمنازعات المدنية والعقود التجارية والتحكيم.',
+                'service_2_title': 'القانون الجنائي',
+                'service_2_description': 'دفاع وتمثيل قانوني في جميع أنواع القضايا الجنائية.',
+                'service_3_title': 'قانون العمل',
+                'service_3_description': 'معالجة قضايا التوظيف، العقود، وإنهاء الخدمة وحقوق العمال.',
+                'service_4_title': 'الملكية الفكرية',
+                'service_4_description': 'حماية حقوق العلامات التجارية وبراءات الاختراع وحقوق النشر.',
+                'service_5_title': 'التحصيل والاستثمار',
+                'service_5_description': 'تقديم استشارات في القضايا المالية وتحصيل الديون.',
+                'service_6_title': 'قانون الأحوال الشخصية',
+                'service_6_description': 'قضايا الزواج والطلاق والميراث والحضانة وفقاً للشريعة والقانون.',
+                // Leadership 
+                'leadership_title': 'فريق القيادة',
+                'partner_photo_placeholder': 'صورة الشريك',
+                'partner_role': 'الشريك المدير',
+                'partner_name': 'اسم الشريك: [الاسم هنا]',
+                'partner_bio': 'المحامي [الاسم] هو المؤسس والشريك المدير، بخبرة تمتد لأكثر من 20 عامًا في القانون المدني والتجاري. يقود المكتب بمهنية عالية ملتزماً بأعلى معايير النزاهة والتميز القانوني.',
+                'team_title': 'أعضاء الفريق الرئيسيون',
+                'team_member_1_name': 'المحامي أسامة',
+                'team_member_1_role': 'خبير قانون العمل',
+                'team_member_2_name': 'المحامية ليلى',
+                'team_member_2_role': 'مستشارة الأحوال الشخصية',
+                'team_member_3_name': 'المستشار ماجد',
+                'team_member_3_role': 'قضايا الملكية الفكرية',
+                'team_member_4_name': 'المحامي زياد',
+                'team_member_4_role': 'قانون التحصيل',
+                // About (Corrected Syntax and updated content)
+                'about_title': 'مكتب عوض الله: ركيزة قانونية موثوقة',
+                'about_paragraph_1': 'نحن شركة محاماة رائدة مقرها في فلسطين، رام الله، ملتزمة بتقديم أعلى معايير التميز القانوني والخدمة الشخصية لعملائنا. تتكون عائلة عوض الله من محامين مؤهلين وخبراء قانونيين يتمتعون بعقود من الخبرة في مختلف مجالات القانون.',
+                'about_paragraph_2': 'مهمتنا هي تقديم استراتيجيات قانونية فعالة وحلول عملية تضمن حقوق ومصالح عملائنا، سواء كانوا أفرادًا أو شركات محلية أو دولية. نحن نعتمد على الفهم العميق للقانون الفلسطيني والبيئة الإقليمية.',
+                // Contact
+                'contact_title': 'تواصل معنا',
+                'contact_instruction': 'يرجى ملء النموذج أدناه وسنقوم بالرد عليك في أقرب وقت ممكن.',
+                'form_label_name': 'الاسم الكامل',
+                'form_label_email': 'البريد الإلكتروني',
+                'form_label_subject': 'الموضوع',
+                'form_label_message': 'رسالتك',
+                'form_submit_btn': 'إرسال الرسالة',
+                'form_success': 'شكرًا لك! لقد تم إرسال رسالتك بنجاح.',
+                'form_error': 'عذراً، حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى.',
+                // Footer 
+                'icon_call': '📞',
+                'icon_email': '📧',
+                'icon_location': '📍',
+                'footer_call_us': 'اتصل بنا',
+                'footer_call_number': '+972 599 244 160',
+                'footer_email_us': 'راسلنا عبر البريد الإلكتروني',
+                'footer_email_address': 'adv.ahmadawadallah@hotmail.com',
+                'footer_visit_office': 'تفضل بزيارة مكتبنا',
+                'footer_office_address': 'رام الله، شارع الارسال، عمارة مخماس، الطابق الرابع.',
+                'open hours': 'مفتوح من ٩:۰۰ص إلى ۷:۰۰م',
+                'footer_copyright': '© 2026 عوض الله للمحاماة والاستشارات القانونية. جميع الحقوق محفوظة.',
+
+            },
+            'en': {
+                // General
+                'firm_name': 'AWADALLAH LAW',
+                'page-title': 'Awadallah Law Firm & Legal Consultants',
+                // Navigation
+                'nav_home': 'Home',
+                'nav_services': 'Services',
+                'nav_leadership': 'Our Leadership',
+                'nav_about': 'About Us',
+                'nav_contact': 'Contact',
+                'nav_login': 'Employee Login',
+                // Hero
+                'hero_title': 'Achieving Justice Starts with a Confident Step',
+                'hero_subtitle': 'We provide specialized legal consultancy and innovative solutions for your cases.',
+                'hero_btn_contact': 'Consult Us Now',
+                'hero_btn_services': 'Explore Our Services',
+                // Services
+                'services_title': 'Our Areas of Expertise',
+                'service_1_title': 'Civil & Commercial Law',
+                'service_1_description': 'Comprehensive coverage for civil disputes, commercial contracts, and arbitration.',
+                'service_2_title': 'Criminal Law',
+                'service_2_description': 'Legal defense and representation in all types of criminal cases.',
+                'service_3_title': 'Labor Law',
+                'service_3_description': 'Handling employment issues, contracts, termination, and workers\' rights.',
+                'service_4_title': 'Intellectual Property',
+                'service_4_description': 'Protection of trademarks, patents, and copyright rights.',
+                'service_5_title': 'Collection & Investment',
+                'service_5_description': 'Providing consultation on financial cases and debt collection.',
+                'service_6_title': 'Personal Status Law',
+                'service_6_description': 'Cases of marriage, divorce, inheritance, and custody in accordance with Sharia and law.',
+                // Leadership 
+                'leadership_title': 'Meet Our Team',
+                'partner_photo_placeholder': 'Partner Photo',
+                'partner_role': 'Managing Partner',
+                'partner_name': 'Partner Name: [Name Here]',
+                'partner_bio': 'Attorney [Name] is the founder and Managing Partner, with over 20 years of experience in civil and commercial law. He leads the firm with high professionalism, committed to the highest standards of integrity and legal excellence.',
+                'team_title': 'Key Team Members',
+                'team_member_1_name': 'Attorney Osama',
+                'team_member_1_role': 'Labor Law Expert',
+                'team_member_2_name': 'Attorney Laila',
+                'team_member_2_role': 'Personal Status Consultant',
+                'team_member_3_name': 'Consultant Majed',
+                'team_member_3_role': 'Intellectual Property',
+                'team_member_4_name': 'Attorney Ziad',
+                'team_member_4_role': 'Collections Law',
+                // About
+                'about_title': 'Awadallah Law: A Trusted Legal Pillar',
+                'about_paragraph_1': 'We are a leading law firm based in Palestine, Ramallah, committed to providing the highest standards of legal excellence and personalized service to our clients. The Awadallah family consists of qualified lawyers and legal experts with decades of experience across various fields of law.',
+                'about_paragraph_2': 'Our mission is to provide effective legal strategies and practical solutions that secure the rights and interests of our clients, whether they are individuals, local, or international companies. We rely on a deep understanding of Jordanian law and the regional environment.',
+                // Contact
+                'contact_title': 'Get In Touch',
+                'contact_instruction': 'Please fill out the form below and we will get back to you as soon as possible.',
+                'form_label_name': 'Full Name',
+                'form_label_email': 'Email Address',
+                'form_label_subject': 'Subject',
+                'form_label_message': 'Your Message',
+                'form_submit_btn': 'Send Message',
+                'form_success': 'Thank you! Your message has been sent successfully.',
+                'form_error': 'Sorry, an error occurred while sending your message. Please try again.',
+                // Footer 
+                'icon_call': '📞',
+                'icon_email': '📧',
+                'icon_location': '📍',
+                'footer_call_us': 'Call Us',
+                'footer_call_number': '+97 0 599 24 41 60',
+                'footer_email_us': 'Email Us',
+                'footer_email_address': 'adv.ahmadawadallah@hotmail.com',
+                'footer_visit_office': 'Visit Our Office',
+                'footer_office_address': 'Ramallah ,irsal St,Mukhmas Building ,4th Floor.',
+                'open hours': 'open from 9:00am-7:00pm',
+                'footer_copyright': '© 2026 Awadallah Law Firm. All Rights Reserved.',
+            }
+        };
+
+        // --- DOM Elements ---
+        const HTML_ELEMENT = document.documentElement;
+        const MODAL = document.getElementById('language-modal');
+        const ALL_SECTIONS = document.querySelectorAll('#main-sections-wrapper, header');
+        const TEXT_ALIGN_ELEMENTS = document.querySelectorAll(
+            '#hero-content, #hero-title, #hero-subtitle, #about-content, #about-title, #about-paragraph-1, #about-paragraph-2, #contact-instruction, #nav-links, .text-center, #partner-text-content'
+        );
+
+        // Helper function to remove multiple classes
+        function removeClasses(el, classes) {
+            if (el) classes.forEach(c => el.classList.remove(c));
+        }
+
+        // Helper function to add multiple classes
+        function addClasses(el, classes) {
+            if (el) classes.forEach(c => el.classList.add(c));
+        }
+
+        // --- Content and Layout Update Logic ---
+        function updateContent(langCode) {
+            const data = contentData[langCode];
+            const dir = (langCode === 'ar') ? 'rtl' : 'ltr';
+
+            // 1. Update all elements based on data-key attribute
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (data[key]) {
+                    // Check if the element is an input and update placeholder/value if necessary
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = data[key];
+                    } else {
+                        el.innerHTML = data[key];
+                    }
+                }
+            });
+
+            // Special handling for the page title element in <head>
+            const pageTitleEl = document.getElementById('page-title');
+            if (pageTitleEl) pageTitleEl.textContent = data['page-title'];
+
+            // 2. Update language and direction attributes
+            HTML_ELEMENT.lang = langCode;
+            HTML_ELEMENT.dir = dir;
+
+            // 3. Adjust Text Alignment and Layout for RTL/LTR
+            TEXT_ALIGN_ELEMENTS.forEach(el => {
+                // Only apply alignment class if the element is not explicitly marked as text-center
+                if (!el.classList.contains('text-center') && el.id !== 'partner-text-content') { // Exclude partner-text-content from this auto-alignment
+                    removeClasses(el, ['text-right', 'text-left']);
+                    if (dir === 'rtl') {
+                        addClasses(el, ['text-right']);
+                    } else {
+                        addClasses(el, ['text-left']);
+                    }
+                }
+            });
+
+            // 4. Adjust Flex Order for RTL/LTR Sections
+
+            // A. Hero buttons
+            const heroButtonsContainer = document.getElementById('hero-buttons-container');
+            removeClasses(heroButtonsContainer, ['sm:flex-row-reverse', 'sm:flex-row']);
+            if (dir === 'rtl') {
+                addClasses(heroButtonsContainer, ['sm:flex-row-reverse']);
+            } else {
+                addClasses(heroButtonsContainer, ['sm:flex-row']);
+            }
+
+            // B. About section (Image/Text) - Swaps position for RTL
+            const aboutContainer = document.getElementById('about-main-container');
+            removeClasses(aboutContainer, ['lg:flex-row-reverse', 'lg:flex-row']);
+            if (dir === 'rtl') {
+                addClasses(aboutContainer, ['lg:flex-row-reverse']);
+            } else {
+                addClasses(aboutContainer, ['lg:flex-row']);
+            }
+
+            // C. Main Partner Block - Swaps image and text content for RTL
+            const partnerBlock = document.getElementById('main-partner-block');
+            removeClasses(partnerBlock, ['md:flex-row-reverse', 'md:flex-row']);
+            const partnerTextContent = document.getElementById('partner-text-content');
+
+            // Adjust text content alignment based on direction
+            removeClasses(partnerTextContent, ['md:text-right', 'md:text-left']);
+
+            if (dir === 'rtl') {
+                addClasses(partnerBlock, ['md:flex-row-reverse']);
+                addClasses(partnerTextContent, ['md:text-right']);
+            } else {
+                addClasses(partnerBlock, ['md:flex-row']);
+                addClasses(partnerTextContent, ['md:text-left']);
+            }
+
+            // 5. Adjust alignment for footer contact items (small screens center, large screens start/end)
+            document.querySelectorAll('[id^="footer-contact-"]').forEach(el => {
+                removeClasses(el, ['sm:text-right', 'sm:text-left', 'sm:items-end', 'sm:items-start']);
+                if (dir === 'rtl') {
+                    addClasses(el, ['sm:text-right', 'sm:items-end']);
+                } else {
+                    addClasses(el, ['sm:text-left', 'sm:items-start']);
+                }
+            });
+        }
+
+
+        // Function to handle language selection and hide modal
+        function setLanguage(langCode) {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const storageKey = `language_preference_${appId}`;
+
+            // 1. Save the preference
+            localStorage.setItem(storageKey, langCode);
+
+            // 2. Update content
+            updateContent(langCode);
+
+            // 3. Hide the modal with a smooth transition
+            MODAL.classList.add('opacity-0');
+
+            // 4. Remove the modal and reveal main content after transition finishes
+            setTimeout(() => {
+                MODAL.classList.add('hidden');
+                ALL_SECTIONS.forEach(el => el.classList.remove('opacity-25'));
+            }, 300); // Matches the duration of the opacity transition
+        }
+
+        // Function to toggle between AR and EN (Now only handles the toggle logic)
+        function toggleLanguage() {
+            const currentLang = HTML_ELEMENT.lang;
+            const newLang = currentLang === 'ar' ? 'en' : 'ar';
+
+            // Simply update the content and save the preference
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const storageKey = `language_preference_${appId}`;
+            localStorage.setItem(storageKey, newLang);
+            updateContent(newLang);
+        }
+
+        // --- EmailJS Configuration (UPDATED with user-provided credentials) ---
+        const EMAILJS_SERVICE_ID = 'service_pobrjhj';
+        const EMAILJS_TEMPLATE_ID = 'template_24tsutl';
+        const EMAILJS_PUBLIC_KEY = 'Xybn6McveoahepfRR';
+
+        // Function to handle form submission using EmailJS
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contact-form');
+            const messageDisplay = document.getElementById('contact-message');
+            const submitBtn = document.getElementById('form-submit-btn');
+
+            // 1. Initialize EmailJS
+            try {
+                emailjs.init(EMAILJS_PUBLIC_KEY);
+            } catch (error) {
+                console.error("EmailJS SDK failed to initialize. Check if the SDK script loaded correctly and your Public Key is set.");
+            }
+
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Function to set the message in the contact area
+                const setMessage = (key, isError = false) => {
+                    messageDisplay.textContent = contentData[HTML_ELEMENT.lang][key];
+                    messageDisplay.classList.remove('hidden', 'text-green-500', 'text-red-500');
+                    messageDisplay.classList.add(isError ? 'text-red-500' : 'text-green-500');
+                };
+
+                // Disable button and show loading state
+                submitBtn.disabled = true;
+                submitBtn.textContent = (HTML_ELEMENT.lang === 'ar') ? 'جاري الإرسال...' : 'Sending...';
+
+                // 2. Send the form data using EmailJS
+                emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
+                    .then(function () {
+                        // Success
+                        console.log('SUCCESS!');
+                        setMessage('form_success', false);
+                        form.reset();
+                    }, function (error) {
+                        // Error
+                        console.error('FAILED...', error);
+                        setMessage('form_error', true);
+                    })
+                    .finally(() => {
+                        // Re-enable button and reset text regardless of success/failure
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = contentData[HTML_ELEMENT.lang]['form_submit_btn'];
+
+                        // Hide message after 5 seconds
+                        setTimeout(() => {
+                            messageDisplay.classList.add('hidden');
+                        }, 5000);
+                    });
+            });
+
+            // --- Initialization Logic ---
+
+            // 1. Check for stored language preference
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const storageKey = `language_preference_${appId}`;
+            const storedLang = localStorage.getItem(storageKey);
+
+            if (storedLang) {
+                // If preferred language exists, hide modal immediately and load content
+                MODAL.classList.add('hidden');
+                ALL_SECTIONS.forEach(el => el.classList.remove('opacity-25'));
+                updateContent(storedLang);
+            } else {
+                // If no preference, the modal remains visible. Content will be loaded when user clicks button.
+                // Default to Arabic content initially while the modal is up (based on HTML lang="ar")
+                updateContent('ar');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

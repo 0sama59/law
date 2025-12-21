@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Document</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* Base Styles */
+body { 
+    background: #0A192F;
+    color: #E2E8F0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background-image: radial-gradient(circle at center, #1C2D4F 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+/* Card Styling */
+.card {
+    background-color: #1e293b;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(22, 163, 74, 0.3);
+}
+/* Input & Button Base */
+input, button, label {
+    font-family: 'Inter', sans-serif;
+}
+/* Standard Input Styling */
+input:not([type="file"]):not([type="checkbox"]) {
+    background-color: #334155;
+    border: 1px solid #475569;
+    color: #E2E8F0;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5);
+    outline: none;
+}
+/* Primary Button Styling */
+button {
+    background-color: #10b981;
+    color: #0f172a;
+    font-weight: bold;
+    transition: 0.2s;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+button:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1 class="text-3xl font-bold mb-6 text-center text-white">Create New Document</h1>
+
+    <input type="text" id="docTitle" placeholder="Document Title" class="mb-4">
+    
+    <!-- Custom styled file input control -->
+    <label for="docFile" id="docFileLabel" class="w-full px-4 py-3 mb-6 rounded flex items-center justify-between cursor-pointer bg-slate-700 hover:bg-slate-600 transition duration-150 border border-slate-600">
+        <span id="fileNameDisplay" class="text-slate-400 truncate pr-4">Select Document File...</span>
+        <span class="text-xs px-3 py-1 bg-green-600 rounded text-slate-900 font-semibold shadow-md hover:bg-green-500">Browse</span>
+    </label>
+    <!-- Hidden native file input -->
+    <input type="file" id="docFile" class="hidden" accept="*/*">
+    
+
+    <button id="createBtn" class="w-full" disabled>Loading...</button>
+</div>
+
+<!-- Custom message box for alerts -->
+<div id="messageBox" class="fixed bottom-4 right-4 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 opacity-0 pointer-events-none z-50 min-w-[200px] text-center"></div>
+
+<script>
+// Wrap the script in an IIFE (Immediately Invoked Function Expression) to avoid global variable conflicts.
+(() => {
+    // Determine the base path for reliable navigation
+    const currentPath = window.location.pathname;
+    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+
+    const SUPABASE_URL = "https://avtskuluotdnkrhpzanc.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_vSdzir6d17x2x3-z4uvOAQ_Zmwxfxff";
+    
+    // Supabase client instance
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // State variable for the authenticated user ID
+    let currentUserId = null;
+
+    // Custom message box function (replaces alert())
+    function showMessage(text, isError = false) {
+        const box = document.getElementById('messageBox');
+        box.textContent = text;
+        // Apply styling based on error state
+        box.className = `fixed bottom-4 right-4 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 z-50 min-w-[200px] text-center ${isError ? 'bg-red-600' : 'bg-green-600'}`;
+        
+        // Show the box
+        box.classList.add('opacity-100', 'pointer-events-auto');
+        
+        // Hide the box after a few seconds
+        setTimeout(() => {
+            box.classList.remove('opacity-100', 'pointer-events-auto');
+            box.classList.add('opacity-0', 'pointer-events-none');
+        }, isError ? 5000 : 3000);
+    }
+
+    // AUTHENTICATION CHECK AND INITIALIZATION
+    async function checkAuthAndInit() {
+        const createBtn = document.getElementById('createBtn');
+        createBtn.textContent = 'Loading...';
+        createBtn.disabled = true;
+
+        // 1. Check for active session token
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+        
+        if (sessionError) {
+             console.error("Session fetch error:", sessionError);
+             showMessage("Authentication check failed. Redirecting...", true); 
+             setTimeout(() => window.location.href=`${basePath}login.html`, 1000);
+             return;
+        }
+
+        if (session) {
+            currentUserId = session.user.id;
+            // Ensure the URL param matches the actual session user ID for consistency
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlUserId = urlParams.get('user_id');
+
+            if (!urlUserId || urlUserId !== currentUserId) {
+                // If URL is missing/stale, correct it but continue loading
+                window.history.replaceState(null, '', `${basePath}document.html?user_id=${currentUserId}`);
+            }
+            
+            // Initialization successful
+            createBtn.textContent = 'Create & Upload';
+            createBtn.disabled = false;
+            
+            // Now that we are authenticated, attach the click handler
+            document.getElementById('createBtn').addEventListener('click', handleCreateDocument);
+        } else {
+            // 2. If no session, redirect to login
+            showMessage("Session expired or not logged in. Redirecting...", true); 
+            setTimeout(() => window.location.href=`${basePath}login.html`, 1000);
+        }
+    }
+
+    // Event listener to update the displayed file name
+    document.getElementById('docFile').addEventListener('change', function(e) {
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        if (e.target.files.length > 0) {
+            fileNameDisplay.textContent = e.target.files[0].name;
+            fileNameDisplay.classList.remove('text-slate-400');
+            fileNameDisplay.classList.add('text-slate-100');
+        } else {
+            fileNameDisplay.textContent = 'Select Document File...';
+            fileNameDisplay.classList.remove('text-slate-100');
+            fileNameDisplay.classList.add('text-slate-400');
+        }
+    });
+
+    // Handle document creation and file upload logic
+    async function handleCreateDocument(){
+        if (!currentUserId) {
+            showMessage("Authentication failed. Please log in again.", true);
+            checkAuthAndInit(); // Try to re-authenticate
+            return;
+        }
+
+        const createBtn = document.getElementById('createBtn');
+        const title = document.getElementById('docTitle').value.trim();
+        const fileInput = document.getElementById('docFile');
+        
+        if(!title){ showMessage("Please enter a document title.", true); return; }
+        if(fileInput.files.length === 0){ showMessage("Please select a file to upload.", true); return; }
+        
+        const file = fileInput.files[0];
+
+        createBtn.textContent = 'Uploading...';
+        createBtn.disabled = true;
+
+        try{
+            // 1. Insert document metadata
+            // Use currentUserId (from session) instead of the less reliable userId (from URL)
+            const { data, error } = await supabaseClient.from('documents') 
+                .insert({ title, status:'In Progress', assignedToId:currentUserId, lastUpdated: new Date().toISOString() })
+                .select();
+            if(error) throw error;
+
+            // CRITICAL CHECK: ensure data is available before proceeding
+            if (!data || data.length === 0) {
+                // This usually indicates an RLS failure that Supabase reports as a successful query but returns no rows.
+                throw new Error("Insert failed, no document ID returned. Check RLS policies for INSERT.");
+            }
+            
+            const newDocId = data[0].id;
+
+            // 2. Upload file to storage
+            const { error: uploadError } = await supabaseClient.storage 
+                .from('documents')
+                // The path includes the document ID as the folder name
+                .upload(`${newDocId}/${file.name}`, file, { upsert:true });
+            if(uploadError) throw uploadError;
+
+            showMessage("Document created and file uploaded successfully!", false);
+            
+            // Use basePath for reliable URL construction
+            setTimeout(() => window.location.href = `${basePath}employee.html?user_id=${currentUserId}`, 1500);
+
+        } catch(err){
+            console.error("Upload Error:", err);
+            
+            // Check for specific RLS errors (often 403 or policy violation message)
+            const isForbidden = err.status === 403 || (err.message && err.message.includes('policy violation'));
+            let displayMessage = err.message || "Unknown error during upload.";
+            
+            if (isForbidden) {
+                displayMessage = "Permission Denied (RLS issue). Check your Supabase Table and Storage RLS policies.";
+            } else if (err.message && err.message.includes('Insert failed')) {
+                displayMessage = "Database Insert Failed. Check 'documents' table columns and RLS.";
+            }
+
+            showMessage("Error creating document: "+ displayMessage, true);
+        } finally {
+            createBtn.textContent = 'Create & Upload';
+            createBtn.disabled = false;
+        }
+    }
+
+    // Start the authentication and initialization process
+    checkAuthAndInit();
+})(); // IIFE End
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { 
+    background: #0A192F;
+    color: #E2E8F0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 2rem;
+    background-image: radial-gradient(circle at center, #1C2D4F 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+button, a, select { font-family: 'Inter', sans-serif; }
+.card {
+    background-color: #1e293b;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.button-primary { 
+    background-color:#10b981; 
+    color:#0f172a; 
+    font-weight:bold; 
+    transition:.2s; 
+    padding:.5rem 1rem; 
+    border-radius:.75rem; 
+    text-align: center;
+    cursor: pointer;
+}
+.button-primary:hover { background-color:#059669; transform: translateY(-1px); }
+.button-view { background-color:#3b82f6; color:#f1f5f9; padding:.3rem .7rem; border-radius:.5rem; font-size:0.875rem; transition:.2s; }
+.button-view:hover { background-color:#2563eb; }
+.button-download { background-color:#f59e0b; color:#1f2937; padding:.3rem .7rem; border-radius:.5rem; font-size:0.875rem; transition:.2s; }
+.button-download:hover { background-color:#d97706; }
+.status-pill { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+.status-In-Progress { background-color: #fcd34d; color: #78350f; }
+.status-Completed { background-color: #34d399; color: #065f46; }
+.status-Rejected { background-color: #f87171; color: #7f1d1d; }
+.select-style {
+    background-color: #334155;
+    border: 1px solid #475569;
+    color: #E2E8F0;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+.select-style:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5);
+    outline: none;
+}
+</style>
+</head>
+<body>
+
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-white">Document Dashboard</h1>
+        <div class="flex items-center space-x-4">
+            <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition">Logout</button>
+            <a id="newDocLink" class="button-primary no-underline flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                <span>New Document</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="mb-4 flex justify-end">
+        <select id="filterSelect" class="select-style">
+            <option value="all">Show All</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+    </div>
+
+    <div id="documents" class="space-y-4">
+        <p class="text-center text-slate-400">Loading documents...</p>
+    </div>
+
+    <div id="loadingIndicator" class="hidden text-center mt-8">
+        <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-green-500" role="status">
+            <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// Supabase
+const SUPABASE_URL = "https://avtskuluotdnkrhpzanc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_vSdzir6d17x2x3-z4uvOAQ_Zmwxfxff";
+const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// User ID
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('user_id');
+if(!userId) window.location.href='login.html';
+
+// Logout button
+const logoutBtn = document.getElementById('logoutBtn');
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('loggedInUser');
+    window.location.href='login.html';
+});
+
+// New Document button
+const newDocLink = document.getElementById('newDocLink');
+newDocLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!userId) {
+        alert('No user ID found!');
+        return;
+    }
+    window.location.href = `document.html?user_id=${userId}`;
+});
+
+// Filter & Load documents
+const filterSelect = document.getElementById('filterSelect');
+const loadingIndicator = document.getElementById('loadingIndicator');
+
+async function loadDocuments() {
+    loadingIndicator.classList.remove('hidden');
+    let query = supabase.from('documents').select('*').eq('assignedToId', userId);
+    if(filterSelect.value !== 'all') query = query.eq('status', filterSelect.value);
+
+    const { data, error } = await query;
+    const container = document.getElementById('documents');
+
+    if(error){
+        container.innerHTML='<p class="text-red-400">Error loading documents.</p>';
+        loadingIndicator.classList.add('hidden');
+        return;
+    }
+
+    container.innerHTML='';
+    if(!data.length){
+        container.innerHTML='<p class="text-center text-slate-400">No documents found.</p>';
+        loadingIndicator.classList.add('hidden');
+        return;
+    }
+
+    for(const d of data){
+        const { data: files } = await supabase.storage.from('documents').list(d.id, { limit: 100 });
+        let filesHtml='';
+        if(files && files.length){
+            filesHtml = files.map(f => {
+                if(f.name === '.emptyFolderPlaceholder') return '';
+                const url = supabase.storage.from('documents').getPublicUrl(`${d.id}/${f.name}`).data.publicUrl;
+                return `<div class="flex gap-3 items-center mt-2 text-sm">
+                    <span class="text-slate-300 truncate max-w-[200px]">${f.name}</span>
+                    <a href="${url}" target="_blank" class="button-view">View</a>
+                    <a href="${url}" download class="button-download">Download</a>
+                </div>`;
+            }).join('');
+        } else filesHtml='<p class="text-slate-400 text-sm mt-2">No files uploaded</p>';
+
+        const lastUpdatedDate = new Date(d.lastUpdated);
+        const formattedDate = lastUpdatedDate.toLocaleString();
+
+        container.innerHTML += `<div class="card">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="font-bold text-xl mb-1 text-white">${d.title}</div>
+                    <div class="text-xs text-slate-500">Last Updated: ${formattedDate}</div>
+                </div>
+                <div class="status-pill status-${d.status.replace(/\s/g,'-')}" title="Document Status">${d.status}</div>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-sm font-semibold text-slate-300">Attachments:</h3>
+                ${filesHtml}
+            </div>
+        </div>`;
+    }
+
+    loadingIndicator.classList.add('hidden');
+}
+
+filterSelect.addEventListener('change', loadDocuments);
+loadDocuments();
+</script>
+</body>
+</html>

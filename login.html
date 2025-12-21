@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+    <title>Employee Login</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            background: #0A192F;
+            color: #E2E8F0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            background-image: radial-gradient(circle at center, #1C2D4F 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .login-card {
+            background-color: #1e293b;
+            transition: all 0.3s ease;
+        }
+
+        .login-card:hover {
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.35);
+        }
+
+        input {
+            background-color: #334155;
+            border-color: #475569;
+        }
+
+        input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5);
+        }
+
+        .button-primary {
+            background-color: #10b981;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .button-primary:hover {
+            background-color: #059669;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="selection:bg-green-700 selection:text-white">
+
+    <div class="w-full max-w-sm p-8 rounded-2xl shadow-xl login-card border border-green-700/50">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-white mb-2">
+                <span class="text-green-400">Secure</span> Login
+            </h1>
+            <p class="text-gray-400 text-sm">Employee Document System</p>
+        </div>
+
+        <div id="loginMessageBox" class="hidden p-3 mb-6 rounded-lg text-sm border">
+            <p id="loginMessageText" class="font-medium"></p>
+        </div>
+
+        <form id="loginForm">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                <input id="username" required placeholder="ahmad"
+                    class="w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                <input type="password" id="password" required placeholder="••••••••"
+                    class="w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none">
+            </div>
+
+            <button id="loginButton" type="submit"
+                class="button-primary w-full py-3 rounded-lg font-bold text-gray-900 shadow-lg">
+                Log In
+            </button>
+        </form>
+
+        <p class="text-center text-xs text-gray-500 mt-6">Internal use only</p>
+    </div>
+
+<script>
+const loginForm = document.getElementById('loginForm');
+const loginMessageBox = document.getElementById('loginMessageBox');
+const loginMessageText = document.getElementById('loginMessageText');
+
+const USERS = {
+  ahmad:   "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  nasser:  "7b2e5f64-8712-4567-b3fc-4d963f77bfa8",
+  mohammad:"1c3a6f54-5717-4f56-a3fc-5a963f88cfa2",
+  perla:   "5d4b7e64-5717-4567-b3fc-2a963f99dfa3"
+};
+
+const PASSWORDS = {
+  ahmad: "456123",
+  nasser: "123321",
+  mohammad: "147852",
+  perla: "123789"
+};
+
+function showMessage(text, error=false){
+  loginMessageText.textContent = text;
+  loginMessageBox.className =
+    'p-3 mb-6 rounded-lg text-sm border ' +
+    (error
+      ? 'bg-red-900/40 border-red-600 text-red-200'
+      : 'bg-green-900/40 border-green-600 text-green-200');
+  loginMessageBox.classList.remove('hidden');
+}
+
+loginForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+
+  const username = document.getElementById('username').value.trim().toLowerCase();
+  const password = document.getElementById('password').value.trim();
+
+  if(!USERS[username] || PASSWORDS[username] !== password){
+    showMessage('Invalid username or password', true);
+    return;
+  }
+
+  showMessage('Login successful! Redirecting...', false);
+
+  setTimeout(()=>{
+    window.location.href = `employee.html?user_id=${USERS[username]}`;
+  }, 500);
+});
+</script>
+
+</body>
+</html>
